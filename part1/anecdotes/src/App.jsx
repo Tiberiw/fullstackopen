@@ -2,27 +2,6 @@ import { useState } from "react";
 
 function App() {
   const getRandomInt = (max) => Math.floor(Math.random() * max)
-  const initialVotes = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0
-  }
-  const [votes, setVotes] = useState(initialVotes)
-
-  const handleNextAnecdote = () => {
-    const next = getRandomInt(anecdotes.length);
-    setSelected(next);
-  }
-
-  const handleVote = (idx) => {
-    setVotes({...votes, [idx]: votes[idx] + 1})
-  }
-
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -33,6 +12,20 @@ function App() {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
+  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0))
+
+  const handleNextAnecdote = () => {
+    const next = getRandomInt(anecdotes.length);
+    setSelected(next);
+  }
+
+  const handleVote = (idx) => {
+    const copy = [...votes]
+    copy[idx] += 1
+    setVotes(copy)
+  }
+
+  
   const [selected, setSelected] = useState(0);
   return (
     <div>
