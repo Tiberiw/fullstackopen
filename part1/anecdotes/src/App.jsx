@@ -2,10 +2,25 @@ import { useState } from "react";
 
 function App() {
   const getRandomInt = (max) => Math.floor(Math.random() * max)
+  const initialVotes = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0
+  }
+  const [votes, setVotes] = useState(initialVotes)
 
   const handleNextAnecdote = () => {
     const next = getRandomInt(anecdotes.length);
     setSelected(next);
+  }
+
+  const handleVote = (idx) => {
+    setVotes({...votes, [idx]: votes[idx] + 1})
   }
 
   const anecdotes = [
@@ -23,6 +38,9 @@ function App() {
     <div>
       {anecdotes[selected]}
       <br/>
+      has {votes[selected]} votes
+      <br/>
+      <button onClick={() => handleVote(selected)}>vote</button>
       <button onClick={handleNextAnecdote}>next anecdote</button>
     </div>
   )
