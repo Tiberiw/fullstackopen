@@ -1,2 +1,2 @@
-const Header = ({course}) => <h1>{course}</h1>; // the component takes an OBJECT as params. That object is props and has course poperty
+const Header = ({course}) => <h2>{course}</h2>;
 export default Header;
