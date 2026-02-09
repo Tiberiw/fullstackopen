@@ -3,12 +3,15 @@ import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Persons from "./components/Persons";
 import personService from './services/persons'
+import Notification from "./components/Notification";
 
 function App() {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('');
   const [nameFilter, setNameFilter] = useState('');
+  const [message, setMessage] = useState(null);
+  const [type, setType] = useState(null);
 
   useEffect(() => {
     personService
@@ -50,8 +53,19 @@ function App() {
         setPersons(prev => prev.concat(response))
         setNewName('')
         setNewPhone('')
+        const msg = `${newPerson.name} added successfully!`
+        showToast(msg, 'success')
       });
   };
+
+  const showToast = (msg, type) => {
+    setMessage(msg)
+    setType(type)
+    setTimeout(() => {
+      setMessage(null)
+      setType(null)
+    }, 3000)
+  }
 
   const handleUpdatePerson = () => {
     const message = `${newName} is already added to the phonebook, replace the old nr with a new one?`
@@ -64,7 +78,14 @@ function App() {
           setPersons(prev => prev.map(p => p.id === res.id ? res : p))
           setNewName('')
           setNewPhone('')
+          const msg = `${newName}'s phone changed successfullt to: ${newPhone}!`
+          showToast(msg, 'success')
         })
+        .catch(() => {
+            const msg = `Information of ${newName} has already been removed from server`;
+            showToast(msg, 'error')
+            setPersons(prev => prev.filter(p => p.id !== newPerson.id))
+        });
     }
 
   }
@@ -82,6 +103,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={type}/>
       <Filter
         value={nameFilter}
         onChange={e => setNameFilter(e.target.value)}
