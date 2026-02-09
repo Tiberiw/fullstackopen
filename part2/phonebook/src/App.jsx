@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Persons from "./components/Persons";
-import axios from 'axios'
+import personService from './services/persons'
 
 function App() {
   const [persons, setPersons] = useState([])
@@ -11,14 +11,15 @@ function App() {
   const [nameFilter, setNameFilter] = useState('');
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => setPersons(response.data))
+    personService
+      .getAll()
+      .then(response => setPersons(response))
   }, [])
 
   const contactsForDisplay = nameFilter === '' 
   ? persons
   : persons.filter(it => it.name.includes(nameFilter))
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!newName.trim()) return
@@ -26,9 +27,7 @@ function App() {
 
     const nameExists = persons.find(it => it.name === newName);
     if (nameExists) {
-      const errorMessage = `${newName} is already added to phonebook`
-      alert(errorMessage);
-      setNewName("");
+      handleUpdatePerson();
       return
     }
 
@@ -43,12 +42,42 @@ function App() {
     const newPerson = {
       name: newName,
       number: newPhone,
-      id: crypto.randomUUID()
     };
-    setPersons(prev => prev.concat(newPerson))
-    setNewName('')
-    setNewPhone('')
+    
+    personService
+      .create(newPerson)
+      .then(response => {
+        setPersons(prev => prev.concat(response))
+        setNewName('')
+        setNewPhone('')
+      });
   };
+
+  const handleUpdatePerson = () => {
+    const message = `${newName} is already added to the phonebook, replace the old nr with a new one?`
+    if (window.confirm(message)) {
+      const currentPerson = persons.find(p => p.name === newName);
+      const newPerson = {...currentPerson, number: newPhone}
+      personService
+        .update(newPerson.id, newPerson)
+        .then(res => {
+          setPersons(prev => prev.map(p => p.id === res.id ? res : p))
+          setNewName('')
+          setNewPhone('')
+        })
+    }
+
+  }
+
+  const handleDelete = (person) => {
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      personService
+      .remove(person.id)
+      .then(() => {
+        setPersons(prev => prev.filter(pers => pers.id !== person.id))
+      })
+    }
+  }
 
   return (
     <div>
@@ -66,7 +95,7 @@ function App() {
         phoneChanged={e => setNewPhone(e.target.value)}
       />
       <h2>Numbers</h2>
-      <Persons persons={contactsForDisplay}/>
+      <Persons persons={contactsForDisplay} onDelete={handleDelete}/>
     </div>
   )
 }
