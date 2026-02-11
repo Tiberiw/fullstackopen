@@ -1,3 +1,4 @@
+import Weather from "./Weather";
 const Country = ({country}) => {
     const {name, capital, area, languages, flags} = country;
 
@@ -13,6 +14,7 @@ const Country = ({country}) => {
                 )}
             </ul>
             <img className="flag" src={flags?.png} alt={`Flag of ${name.common}`} />
+            <Weather capital={capital?.[0]}/>
         </div>
     )
 };
