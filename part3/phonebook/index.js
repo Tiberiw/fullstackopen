@@ -4,13 +4,14 @@ var morgan = require('morgan')
 
 app.use(express.json())
 
+app.use(express.static("dist"))
+
 morgan.token('body', (req) => JSON.stringify(req.body));
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-
 let persons = [
-    { 
+    {
       "id": "1",
       "name": "Arto Hellas", 
       "number": "040-123456"
@@ -57,9 +58,9 @@ app.get("/api/persons/:id", (req, res) => {
 
 const generateId = () => {
     const currentIds = persons.map(p => +p.id);
-    let newId = Math.random() * 1000000;
+    let newId = Math.ceil(Math.random() * 1000000);
     while (currentIds.find(it => it === newId)) {
-        newId = Math.random() * 1000000;
+        newId = Math.ceil(Math.random() * 1000000);
     }
     return String(newId);
 }
@@ -93,5 +94,5 @@ app.delete("/api/persons/:id", (req, res) => {
     res.status(204).end()
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server listening on port: ${PORT}`));

@@ -14,14 +14,30 @@ function App() {
   const [type, setType] = useState(null);
 
   useEffect(() => {
+
+    const showToast = (msg, type) => {
+      setMessage(msg)
+      setType(type)
+      setTimeout(() => {
+        setMessage(null)
+        setType(null)
+      }, 3000)
+    }
+
     personService
       .getAll()
-      .then(response => setPersons(response))
+      .then(response => {setPersons(response);})
+      .catch(err => showToast(err.message, 'error'))
+
   }, [])
 
   const contactsForDisplay = nameFilter === '' 
   ? persons
   : persons.filter(it => it.name.includes(nameFilter))
+
+  if (persons.length === 0) {
+    return <div>No persons</div>
+  }
   
   const handleSubmit = (e) => {
     e.preventDefault()
