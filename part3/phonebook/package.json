@@ -7,16 +7,18 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "deploy": "fly deploy",
+    "deploy": "fly deploy --depot=false",
     "build:ui": "@powershell Remove-Item -Recurse -Force dist; Set-Location ../../part2/phonebook/; npm run build; Copy-Item -Recurse dist ../../part3/phonebook",
-    "deploy:full": "npm run build:ui && npm run deploy --depot=false",
+    "deploy:full": "npm run build:ui && npm run deploy",
     "start": "node index.js",
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "mongoose": "^8.23.0",
     "morgan": "^1.10.1"
   },
   "devDependencies": {
