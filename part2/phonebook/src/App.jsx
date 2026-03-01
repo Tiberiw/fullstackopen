@@ -66,11 +66,17 @@ function App() {
     personService
       .create(newPerson)
       .then(response => {
+        console.log("Ceva aici?")
         setPersons(prev => prev.concat(response))
         setNewName('')
         setNewPhone('')
         const msg = `${newPerson.name} added successfully!`
         showToast(msg, 'success')
+      })
+      .catch(err => {
+        console.log("ceva?")
+        const msg = err.response.data.error
+        showToast(msg, 'error')
       });
   };
 
